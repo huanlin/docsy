@@ -2,5 +2,16 @@
 {
   "version": "0.2",
   "caseSensitive": true,
-  "words": ["Docsy", "hugo", "shortcode", "shortcodes", "upvote", "warnf"]
+  "words": [
+    "Docsy",
+    "errorf",
+    "hugo",
+    "relref",
+    "scrollspy",
+    "shortcode",
+    "shortcodes",
+    "tabpane",
+    "upvote",
+    "warnf"
+  ]
 }
