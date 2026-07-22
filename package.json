@@ -1,62 +1,96 @@
 {
   "name": "docsy",
-  "version": "0.12.1-dev-unreleased",
-  "version.next": "0.12.2-dev-unreleased",
+  "version": "0.15.1-dev+041-over-main-4d8d85ef",
   "repository": "github:google/docsy",
   "homepage": "https://www.docsy.dev",
   "license": "Apache-2.0",
-  "scripts": {
-    "_build": "npm run cd:docs -- _build",
-    "_cd:docs": "cd userguide &&",
-    "_check:format": "npx prettier --check *.md",
-    "_commit:public": "npm run cd:docs -- _commit:public",
-    "_cp:bs-rfs": "npx cpy 'node_modules/bootstrap/scss/vendor/*' assets/_vendor/bootstrap/scss/",
-    "_diff:check": "git diff --name-only --exit-code",
-    "_gen-chroma-styles": "bash -c tools/gen-chroma-styles.sh && bash -c 'tools/gen-chroma-styles.sh -s onedark -o _dark.scss'",
-    "_mkdir:hugo-mod": "node tools/mkdirp-hugo-mod.js ..",
-    "_prepare": "npm run _cp:bs-rfs && npm run _refresh-forward-sass-var && npm run _gen-chroma-styles && npm run get:hugo-modules",
-    "_refresh-forward-sass-var": "bash -c tools/refresh-sass-variables.pl",
-    "build:preview": "npm run cd:docs -- build:preview --",
-    "build:production": "npm run cd:docs -- build:production --",
-    "build": "npm run cd:docs -- build --",
-    "cd:docs": "npm run _cd:docs -- npm run",
-    "check:format": "npm run _check:format || (echo '[help] Run: npm run fix:format'; exit 1)",
-    "check:links:internal": "npm run cd:docs check:links:internal",
-    "check:links": "npm run cd:docs check:links",
-    "check": "npm run check:format",
-    "ci:post": "npm run fix:format && npm run _diff:check",
-    "ci:prepare": "npm run docs-install && npm run _prepare && npm run _diff:check",
-    "docs-install": "npm run _cd:docs -- npm install",
-    "fix:format": "npm run _check:format -- --write && npm run cd:docs fix:format",
-    "get:hugo-modules": "node tools/getHugoModules/index.mjs",
-    "postinstall": "npm run _mkdir:hugo-mod",
-    "serve": "npm run cd:docs serve",
-    "test:all": "npm run ci:prepare && npm run check && npm run cd:docs test && npm run ci:post",
-    "test": "npm run check && npm run cd:docs test",
-    "update:dep": "npm install --save-exact @fortawesome/fontawesome-free@latest bootstrap@latest",
-    "update:hugo": "npm install --save-exact -D hugo-extended@latest",
-    "update:pkgs": "npx npm-check-updates --dep 'prod,dev,optional,peer' -u && npm run cd:docs update:pkgs"
+  "private": true,
+  "bin": {
+    "gen-favicons": "theme/scripts/gen-favicons/cli.mjs"
   },
-  "dependencies": {
-    "@fortawesome/fontawesome-free": "6.7.2",
-    "bootstrap": "5.3.6"
+  "files": [
+    "theme",
+    "!theme/LICENSE",
+    "!theme/images",
+    "!theme/node_modules",
+    "!theme/package-lock.json",
+    "!theme/scripts/**/*.test.mjs"
+  ],
+  "workspaces": [
+    "docsy.dev",
+    "theme"
+  ],
+  "scripts": {
+    "__spv": "node scripts/set-package-version/index.mjs",
+    "_check:afdocs": "npm run -s -C docsy.dev _check:afdocs",
+    "_check:format": "npx prettier --check theme/assets *.md theme/i18n theme/scripts scripts tasks tests",
+    "_check:links": "npm run -C docsy.dev _check:links",
+    "_check:markdown": "npx markdownlint-cli2",
+    "_commit:public": "npm run -C docsy.dev _commit:public",
+    "_cp:bs-scrollspy": "perl scripts/scrollspy-patch/extract-method.pl",
+    "_diff:check": "git diff --name-only --exit-code",
+    "_gen-chroma-styles": "bash -c scripts/gen-chroma-styles.sh",
+    "_clean:node_modules": "bash -c 'rm -rf {.,docsy.dev,theme}/{resources,node_modules,package-lock.json}'",
+    "_prepare:scrollspy-patch": "npm run _cp:bs-scrollspy && bash scripts/scrollspy-patch/apply-patch.sh && perl scripts/scrollspy-patch/update-patch-js.pl",
+    "_prepare": "npm run _prepare:scrollspy-patch && npm run _refresh-forward-sass-var && npm run _gen-chroma-styles",
+    "_refresh-forward-sass-var": "bash -c scripts/refresh-sass-variables.pl",
+    "_serve": "npm run -C docsy.dev _serve --",
+    "_spv:example": "echo TBC - npm run -s __spv docsy.dev/config/example/params.yaml --",
+    "_spv": "npm run -s __spv docsy.dev/config/*/params.yaml --",
+    "build": "npm run -C docsy.dev build --",
+    "check:afdocs:dev": "npm run -s _check:afdocs -- http://localhost:1313 | tee docsy.dev/content/en/docs/content/agent-support/afdocs-scorecard.txt",
+    "check:format": "npm list prettier && npm run _check:format || (echo '[help] Run: npm run fix:format'; exit 1)",
+    "check:links": "npm run -C docsy.dev check:links",
+    "check:markdown": "npm run _check:markdown -- '**/*.md'",
+    "check": "npm run check:format && npm run check:markdown",
+    "ci:post": "npm run fix-for-test && npm run _diff:check && npm run test:hugo-versions && npm run test:tooling && npm run test:fixture-site",
+    "ci:prepare": "npm run _prepare && npm run _diff:check",
+    "ci:test": "npm run ci:prepare && npm run check && npm run test:website && npm run ci:post",
+    "doc-rooted": "TD_BUILD_CTX=doc-rooted npm run",
+    "fix-and-test": "echo 'RUNNING most FIXES AND TESTS...'; npm run fix-for-test && npm run test:website && npm run test:fixture-site",
+    "fix-for-test": "npm run fix:format && npm run fix:markdown && npm run -C docsy.dev fix",
+    "fix:format:diff": "npm run fix:format",
+    "fix:format": "npm run -s _check:format -- --write && echo && npm run -s -C docsy.dev fix:format",
+    "fix:markdown": "npm run check:markdown -- --fix",
+    "fix:refcache": "npm run -C docsy.dev fix:refcache",
+    "fix": "npm run fix:format && npm run fix:markdown && npm run -C docsy.dev fix",
+    "install:theme-deps": "npm install --prefix theme --omit=dev --omit=peer --no-audit --no-fund",
+    "post-update": "echo; echo 'IMPORTANT! Run the following in case the ScrollSpy patch needs to be updated:\n  npm run _prepare'; echo",
+    "postinstall": "npm run install:theme-deps",
+    "postupdate:dep": "npm run -s post-update",
+    "postupdate:packages": "npm run -s post-update",
+    "refcache": "npm run -C docsy.dev refcache --",
+    "seq": "bash -c 'for cmd in \"$@\"; do npm run $cmd || exit 1; done' - ",
+    "serve": "npm run -C docsy.dev serve --",
+    "set:version:example:git-info": "npm run set:version:example -- --version \"$(scripts/get-build-id.sh)\"",
+    "set:version:example": "cd ../docsy-example && node ../docsy/scripts/set-package-version/index.mjs",
+    "set:version:git-info": "npm run -s _spv -- --version \"$(scripts/get-build-id.sh)\"",
+    "set:version": "npm run -s _spv --",
+    "test:fixture-site": "node --test 'tests/fixture-site/**/*.test.mjs'",
+    "test:hugo-versions": "node --test tests/hugo-versions.test.mjs",
+    "test:lychee": "node --test 'tests/lychee/**/*.test.mjs'",
+    "test:site-equivalence": "node tests/site-equivalence/full-vs-shared.mjs --check",
+    "test:smoke": "node tests/smoke.test.mjs",
+    "test:tooling": "node --test scripts/npm-pack.test.mjs scripts/set-package-version/hugo-yaml.test.mjs scripts/set-package-version/index.test.mjs theme/scripts/gen-favicons/gen-favicons.test.mjs",
+    "test:website": "npm run -C docsy.dev test",
+    "test": "npm run fix-and-test",
+    "update:dep": "npm install --save-exact @fortawesome/fontawesome-free@latest bootstrap@latest",
+    "update:goldens": "npm run -C docsy.dev update:goldens",
+    "update:packages:all": "npm run update:packages --workspaces --include-workspace-root",
+    "update:packages:not-hugo": "npm run update:packages -- -x hugo-extended",
+    "update:packages": "npx npm-check-updates -u",
+    "zzz": "echo 'This is just a placeholder that is the last script in this script collection.'"
   },
   "devDependencies": {
-    "cpy-cli": "^5.0.0",
-    "prettier": "^3.5.3"
-  },
-  "peerDependencies": {
-    "hugo-extended": "0.147.8",
-    "netlify-cli": "^22.1.3",
-    "npm-check-updates": "^18.0.1"
-  },
-  "peerDependenciesMeta": {
-    "netlify-cli": {
-      "optional": true
-    }
+    "@cspell/dict-fr-fr": "^2.3.2",
+    "jsdom": "^29.1.1",
+    "markdownlint-cli2": "^0.21.0",
+    "markdownlint-rule-link-pattern": "github:chalin/markdownlint-rule-link-pattern#v0.2.0",
+    "markdownlint-rule-no-shortcut-ref-link": "github:chalin/markdownlint-rule-no-shortcut-ref-link#v0.3.1",
+    "prettier": "^3.9.3"
   },
   "engines": {
-    "node": ">=22"
+    "node": ">=24"
   },
-  "spelling": "cSpell:ignore docsy hugo fortawesome fontawesome onedark twbs netlify pkgs userguide -"
+  "spelling": "cSpell:ignore -"
 }

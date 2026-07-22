@@ -1,13 +1,18 @@
 # Docsy
 
-> **🚧 WARNING 🚧 : `main` is under development and potentially unstable! Use
-> official Docsy [releases].**
+<!-- markdownlint-disable no-docsy-dev-external-urls -->
 
 Docsy is a [Hugo](https://gohugo.io) theme for technical documentation sets,
 providing simple navigation, site structure, and more.
 
 This is not an officially supported Google product. This project is actively
 being maintained.
+
+> [!IMPORTANT] 🚧 IMPORTANT 🚧
+>
+> The `main` branch is under development and not officially supported; use
+> official Docsy [releases][]. For full support details, see [Official support
+> limits][official-support].
 
 ## Prerequisites
 
@@ -48,7 +53,7 @@ You can find an example project that uses Docsy in the
 [Docsy Example Project repo](https://github.com/google/docsy-example).The Docsy
 Example Project is hosted at [example.docsy.dev](https://example.docsy.dev). For
 real-life examples of sites that use Docsy (and their source repos), see our
-[Examples](https://www.docsy.dev/docs/examples/) page.
+[Examples and templates](https://www.docsy.dev/examples/) page.
 
 To use the Docsy theme for your own site:
 
@@ -67,9 +72,12 @@ details about the various usage options.
 ## Documentation
 
 Docsy has its own user guide (using Docsy, of course!) with lots more
-information about using the theme. It is hosted by [Netlify] at
-[docsy.dev](https://docsy.dev). For deploy logs and more, see [Deploys] from the
-site's Netlify dashboard.
+information about using the theme. It is hosted by [Netlify][] at
+[docsy.dev](https://docsy.dev/).
+
+**Maintainers**: you can access deploy logs, the [deploy preview of
+`main`][main-preview], and more from the [Deploys][] section of the site's
+Netlify dashboard.
 
 Alternatively you can use Hugo to generate and serve a local copy of the guide
 (also useful for testing local theme changes), making sure you have installed
@@ -77,26 +85,31 @@ all the prerequisites listed above:
 
 ```sh
 git clone --depth 1 https://github.com/google/docsy.git
-cd docsy/userguide/
+cd docsy
 npm install
 npm run serve
 ```
 
 ## Contributing
 
-For details on our [code of conduct] and the process for submitting pull
-requests, see [CONTRIBUTING.md]. Thank you to all past, present, and future
-[contributors]!
+For details on our [code of conduct][] and the process for submitting pull
+requests, see [CONTRIBUTING.md][]. Thank you to all past, present, and future
+[contributors][]!
 
 ## License
 
-This project is licensed under the Apache License 2.0 - see
-[LICENSE](https://github.com/google/docsy/blob/main/LICENSE) for details
+This project is licensed under the Apache License 2.0, see
+[LICENSE](https://github.com/google/docsy/blob/main/LICENSE) for details.
 
 [code of conduct]:
   https://github.com/google/.github/blob/master/CODE_OF_CONDUCT.md
 [CONTRIBUTING.md]: https://github.com/google/docsy/blob/main/CONTRIBUTING.md
 [contributors]: https://github.com/google/docsy/graphs/contributors
 [deploys]: https://app.netlify.com/sites/docsydocs/deploys
+[main-preview]: https://main--docsydocs.netlify.app/
 [netlify]: https://netlify.com
+[official-support]:
+  https://www.docsy.dev/project/about/changelog/#official-support
 [releases]: https://github.com/google/docsy/releases
+
+<!-- cSpell:ignore docsy -->

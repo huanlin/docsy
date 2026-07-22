@@ -1,0 +1,18 @@
+customRules:
+  - ./scripts/_md-rules/link-rules.mjs
+
+gitignore: .gitignore
+
+globs:
+  - '!docsy.dev/**'
+  - docsy.dev/content/en/blog/**/*.md
+  - docsy.dev/content/en/docs/_index.md
+  - docsy.dev/content/en/docs/content/**/*.md
+  - docsy.dev/content/en/docs/best-practices/**/*.md
+  - docsy.dev/content/en/docs/get-started/other-options.md
+  - docsy.dev/content/en/docs/language.md
+  - docsy.dev/content/en/project/**/*.md
+  - '!theme/layouts/**'
+
+config:
+  extends: .markdownlint.yaml
